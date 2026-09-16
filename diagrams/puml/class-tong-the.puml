@@ -1,0 +1,118 @@
+@startuml Class_TongThe
+title Class Diagram tong the - DentCare
+skinparam classAttributeIconSize 0
+
+class Patient {
+  - patientId : String {unique}
+  - fullName : String
+  - dateOfBirth : Date
+  - gender : String
+  - phoneNumber : String
+  - address : String
+  - isDeleted : boolean
+  + register() : boolean
+  + updateProfile() : boolean
+  + viewMedicalHistory() : List<MedicalRecord>
+}
+
+class Dentist {
+  - dentistId : String {unique}
+  - fullName : String
+  - specialty : String
+  - licenseNumber : String
+  + viewWorkSchedule(d : Date) : List<Appointment>
+  + isAvailable(d : Date, slot : String) : boolean
+}
+
+class Appointment {
+  - appointmentId : String {unique}
+  - appointmentDate : Date
+  - timeSlot : String
+  - status : String
+  + create() : boolean
+  + confirm() : boolean
+  + cancel() : boolean
+  + isCancellable() : boolean
+}
+
+class MedicalRecord {
+  - recordId : String {unique}
+  - examDate : Date
+  - symptom : String
+  - diagnosis : String
+  - treatment : String
+  + createRecord() : boolean
+  + addService(s : DentalService, qty : int) : void
+  + complete() : boolean
+}
+
+class DentalService {
+  - serviceId : String {unique}
+  - serviceName : String
+  - description : String
+  - unitPrice : double
+  - unit : String
+  - isActive : boolean
+  + addService() : boolean
+  + updatePrice(p : double) : boolean
+  + validatePrice() : boolean
+}
+
+class Invoice {
+  - invoiceId : String {unique}
+  - issueDate : Date
+  - totalAmount : double
+  - status : String
+  + calculateTotal() : double
+  + addDetail(d : InvoiceDetail) : void
+  + pay(m : PaymentMethod) : boolean
+  + print() : void
+}
+
+class InvoiceDetail {
+  - detailId : String
+  - quantity : int
+  - unitPrice : double
+  - lineTotal : double
+  + calculateLineTotal() : double
+  + validateQuantity() : boolean
+}
+
+abstract class PaymentMethod {
+  - paymentId : String
+  - amount : double
+  - paidAt : Date
+  + {abstract} processPayment() : boolean
+}
+
+class CashPayment {
+  - cashReceived : double
+  - changeAmount : double
+  + processPayment() : boolean
+}
+
+class TransferPayment {
+  - bankName : String
+  - transactionCode : String
+  + processPayment() : boolean
+}
+
+Patient "1" -- "0..*" Appointment : dat >
+Dentist "1" -- "0..*" Appointment : phu trach >
+Appointment "1" -- "0..1" MedicalRecord : sinh ra >
+MedicalRecord "1" -- "0..1" Invoice : can cu lap >
+MedicalRecord "0..*" -- "1..*" DentalService : su dung >
+Invoice "1" *-- "1..*" InvoiceDetail
+InvoiceDetail "0..*" -- "1" DentalService : tham chieu >
+Invoice "1" -- "1" PaymentMethod : thanh toan bang >
+PaymentMethod <|-- CashPayment
+PaymentMethod <|-- TransferPayment
+
+note bottom of Invoice
+  BR-04: totalAmount = Sum(InvoiceDetail.lineTotal)
+end note
+note bottom of Patient
+  BR-08: Xoa Patient dung xoa mem (isDeleted),
+  khong xoa MedicalRecord / Invoice lich su
+end note
+@enduml
