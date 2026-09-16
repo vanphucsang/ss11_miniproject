@@ -1,0 +1,51 @@
+@startuml SD_DatLichHen
+title Sequence Diagram - Dat lich hen
+actor ":BenhNhan" as BN
+participant ":DatLichUI" as UI
+participant ":AppointmentService" as AS
+participant ":DentistService" as DS
+database ":CSDL" as DB
+
+BN -> UI : chonDatLich(dentistId, ngayHen)
+activate UI
+UI -> DS : layLichTrong(dentistId, ngayHen)
+activate DS
+DS -> DB : truyVanLichDaDat(status="Da xac nhan")
+activate DB
+DB --> DS : danhSachLichDaDat
+deactivate DB
+DS --> UI : danhSachKhungGioTrong
+deactivate DS
+UI --> BN : hienThiKhungGioTrong()
+
+BN -> UI : chonKhungGio(timeSlot) + xacNhanDatLich()
+UI -> AS : datLichHen(patientId, dentistId, ngayHen, timeSlot)
+activate AS
+AS -> AS : validateNgayHen(ngayHen)
+AS -> DS : kiemTraTrungLich(dentistId, ngayHen, timeSlot)
+activate DS
+DS -> DB : dem(status="Da xac nhan")
+activate DB
+DB --> DS : soLuong
+deactivate DB
+DS --> AS : coTheDat : boolean
+deactivate DS
+
+alt Con slot trong
+  AS -> DB : insertAppointment(status="Cho xac nhan")
+  activate DB
+  DB --> AS : appointmentId
+  deactivate DB
+  AS --> UI : ketQua(thanhCong, appointmentId)
+  UI --> BN : thongBaoDatLichThanhCong(appointmentId)
+else else
+  AS -> DS : deXuatKhungGioKhac(dentistId, ngayHen)
+  activate DS
+  DS --> AS : danhSachGoiY
+  deactivate DS
+  AS --> UI : ketQua(thatBai, danhSachGoiY)
+  UI --> BN : thongBaoTrungLich() + hienThiGoiY()
+end
+deactivate AS
+deactivate UI
+@enduml
