@@ -1,0 +1,70 @@
+@startuml SD_KhamBenh_TaoHoaDon
+title Sequence Diagram - Kham benh va Tao hoa don
+actor ":NhaSi" as NS
+participant ":KhamBenhUI" as UI
+participant ":RecordService" as RS
+participant ":InvoiceService" as IS
+database ":CSDL" as DB
+
+NS -> UI : moHoSoKham(appointmentId)
+activate UI
+UI -> RS : taoHoSoKham(appointmentId)
+activate RS
+RS -> DB : insertMedicalRecord()
+activate DB
+DB --> RS : recordId
+deactivate DB
+RS --> UI : hoSoKham(recordId)
+deactivate RS
+
+NS -> UI : nhapChanDoan(symptom, diagnosis, treatment)
+NS -> UI : chonDichVuDaThucHien(danhSachDichVu)
+UI -> RS : capNhatHoSo(recordId, chanDoan, danhSachDichVu)
+activate RS
+RS -> DB : updateMedicalRecord()
+activate DB
+DB --> RS : OK
+deactivate DB
+RS -> RS : hoanTatHoSo(recordId)
+RS --> UI : hoSoHoanTat(recordId)
+deactivate RS
+
+UI -> IS : taoHoaDon(recordId)
+activate IS
+IS -> DB : layDanhSachDichVu(recordId)
+activate DB
+DB --> IS : danhSachDichVu
+deactivate DB
+IS -> DB : insertInvoice(status="Chua thanh toan")
+activate DB
+DB --> IS : invoiceId
+deactivate DB
+
+loop cho moi dich vu da thuc hien
+  IS -> IS : tinhLineTotal(unitPrice, quantity)
+  IS -> DB : insertInvoiceDetail(invoiceId, serviceId, quantity, lineTotal)
+  activate DB
+  DB --> IS : detailId
+  deactivate DB
+end
+
+IS -> IS : tinhTongTien()
+note right : totalAmount = Sum(lineTotal)
+IS -> DB : updateInvoice(totalAmount)
+activate DB
+DB --> IS : OK
+deactivate DB
+IS --> UI : hoaDon(invoiceId, totalAmount)
+deactivate IS
+UI --> NS : hienThiHoaDon(invoiceId, totalAmount)
+
+opt Benh nhan yeu cau in hoa don
+  NS -> UI : yeuCauInHoaDon(invoiceId)
+  UI -> IS : inHoaDon(invoiceId)
+  activate IS
+  IS --> UI : fileHoaDon
+  deactivate IS
+  UI --> NS : xuatBanIn()
+end
+deactivate UI
+@enduml
