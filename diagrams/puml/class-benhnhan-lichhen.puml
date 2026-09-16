@@ -1,0 +1,44 @@
+@startuml Class_BenhNhan_LichHen
+title Class Diagram - Phan he Benh nhan / Lich hen
+skinparam classAttributeIconSize 0
+
+class Patient {
+  - patientId : String {unique}
+  - fullName : String
+  - dateOfBirth : Date
+  - gender : String
+  - phoneNumber : String
+  - address : String
+  + register() : boolean
+  + updateProfile() : boolean
+  + viewMedicalHistory() : List<MedicalRecord>
+  + viewAppointments() : List<Appointment>
+  + validatePhone() : boolean
+}
+
+class Dentist {
+  - dentistId : String {unique}
+  - fullName : String
+  - specialty : String
+  - licenseNumber : String
+  + viewWorkSchedule(d : Date) : List<Appointment>
+  + isAvailable(d : Date, slot : String) : boolean
+  + examine(a : Appointment) : MedicalRecord
+}
+
+class Appointment {
+  - appointmentId : String {unique}
+  - appointmentDate : Date
+  - timeSlot : String
+  - status : String
+  - note : String
+  + create() : boolean
+  + confirm() : boolean
+  + cancel() : boolean
+  + isCancellable() : boolean
+  + checkConflict() : boolean
+}
+
+Patient "1" -- "0..*" Appointment : dat >
+Dentist "1" -- "0..*" Appointment : phu trach >
+@enduml
