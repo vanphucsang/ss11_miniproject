@@ -1,0 +1,24 @@
+@startuml Activity_DatLichHen
+title Activity Diagram - Luong Dat Lich Hen (DentCare)
+start
+:Benh nhan gui yeu cau dat lich\n(chon Nha si, ngay, khung gio);
+:Kiem tra lich trong cua Nha si;
+if (Khung gio con trong?) then ([Con trong])
+  :Tao lich hen\nstatus = "Cho xac nhan";
+  :Le tan xac nhan lich hen\nstatus = "Da xac nhan";
+  fork
+    :Gui SMS xac nhan cho Benh nhan;
+  fork again
+    :Cap nhat lich lam viec cua Nha si;
+  end fork
+else ([Da co lich])
+  :He thong de xuat cac khung gio khac;
+  if (Benh nhan chap nhan khung gio moi?) then ([Dong y])
+    :Chon lai khung gio;
+    detach
+  else ([Tu choi])
+    :Ket thuc, khong tao lich hen;
+  endif
+endif
+stop
+@enduml
