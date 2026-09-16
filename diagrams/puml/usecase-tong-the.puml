@@ -1,0 +1,56 @@
+@startuml UseCase_DentCare
+left to right direction
+title Use Case Diagram tong the - He thong DentCare
+
+actor "Benh nhan" as BN
+actor "NhanVien" as NV
+actor "Le tan" as LT
+actor "Nha si" as NS
+actor "Quan ly" as QL
+actor "SMS Gateway" as SMS
+
+NV <|-- LT
+NV <|-- NS
+NV <|-- QL
+
+rectangle "HE THONG DENTCARE" {
+  usecase "UC-00 Dang nhap" as UC0
+  usecase "UC-01 Dat lich hen" as UC1
+  usecase "UC-02 Huy lich hen" as UC2
+  usecase "UC-03 Quan ly ho so benh nhan" as UC3
+  usecase "UC-04 Kham benh & ghi ho so" as UC4
+  usecase "UC-05 Tao hoa don" as UC5
+  usecase "UC-06 Thanh toan" as UC6
+  usecase "UC-07 Quan ly dich vu" as UC7
+  usecase "UC-08 Bao cao doanh thu" as UC8
+  usecase "UC-09 Tra cuu ho so benh nhan" as UC9
+  usecase "UC-10 Gui SMS nhac hen" as UC10
+  usecase "UC-11 Kiem tra lich trong" as UC11
+  usecase "UC-12 Xem lich lam viec" as UC12
+}
+
+BN --> UC0
+NV --> UC0
+BN --> UC1
+BN --> UC2
+BN --> UC9
+LT --> UC1
+LT --> UC2
+LT --> UC3
+LT --> UC5
+LT --> UC6
+LT --> UC9
+NS --> UC4
+NS --> UC9
+NS --> UC12
+QL --> UC7
+QL --> UC8
+QL --> UC9
+
+UC1 ..> UC11 : <<include>>
+UC6 ..> UC5 : <<include>>
+UC4 ..> UC9 : <<include>>
+UC10 ..> UC1 : <<extend>>
+UC10 ..> UC2 : <<extend>>
+UC10 --> SMS
+@enduml
