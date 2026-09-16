@@ -1,0 +1,44 @@
+@startuml Class_ThanhToan
+title Class Diagram - Phan he Thanh toan (Generalization)
+skinparam classAttributeIconSize 0
+
+class Invoice {
+  - invoiceId : String {unique}
+  - issueDate : Date
+  - totalAmount : double
+  - status : String
+  + calculateTotal() : double
+  + addDetail(d : InvoiceDetail) : void
+  + pay(m : PaymentMethod) : boolean
+  + print() : void
+}
+
+abstract class PaymentMethod {
+  - paymentId : String
+  - amount : double
+  - paidAt : Date
+  + {abstract} processPayment() : boolean
+  + {abstract} getDescription() : String
+}
+
+class CashPayment {
+  - cashReceived : double
+  - changeAmount : double
+  + processPayment() : boolean
+  + getDescription() : String
+  + calculateChange() : double
+}
+
+class TransferPayment {
+  - bankName : String
+  - transactionCode : String
+  - accountNumber : String
+  + processPayment() : boolean
+  + getDescription() : String
+  + verifyTransaction() : boolean
+}
+
+PaymentMethod <|-- CashPayment
+PaymentMethod <|-- TransferPayment
+Invoice "1" -- "1" PaymentMethod : thanh toan bang >
+@enduml
