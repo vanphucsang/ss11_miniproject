@@ -1,0 +1,34 @@
+@startuml SD_HuyLichHen
+title Sequence Diagram - Huy lich hen
+actor ":BenhNhan" as BN
+participant ":HuyLichUI" as UI
+participant ":AppointmentService" as AS
+database ":CSDL" as DB
+participant ":SMSGateway" as SMS
+
+BN -> UI : chonHuyLich(appointmentId)
+activate UI
+UI -> AS : huyLichHen(appointmentId)
+activate AS
+AS -> DB : layTrangThai(appointmentId)
+activate DB
+DB --> AS : trangThai
+deactivate DB
+AS -> AS : kiemTraDieuKienHuy(trangThai)
+
+alt Trang thai == "Cho xac nhan" or "Da xac nhan"
+  AS -> DB : updateAppointment(status="Da huy")
+  activate DB
+  DB --> AS : OK
+  deactivate DB
+  AS ->> SMS : guiSMSThongBao(dentistId, noiDung)
+  note right : Thong diep BAT DONG BO\n(khong cho phan hoi)
+  AS --> UI : ketQua(thanhCong)
+  UI --> BN : thongBaoHuyThanhCong()
+else else (Da kham / Da huy)
+  AS --> UI : ketQua(loi, "Lich hen da kham khong the huy")
+  UI --> BN : hienThiLoi()
+end
+deactivate AS
+deactivate UI
+@enduml
