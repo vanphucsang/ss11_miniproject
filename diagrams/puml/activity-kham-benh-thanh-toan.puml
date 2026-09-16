@@ -1,0 +1,25 @@
+@startuml Activity_KhamBenh_ThanhToan
+title Activity Diagram - Kham benh va Thanh toan (Swimlane)
+|Benh nhan|
+start
+:Den phong kham theo lich hen;
+|Le tan|
+:Tiep nhan, doi chieu lich hen\nstatus = "Dang kham";
+|Nha si|
+:Kham va chan doan;
+:Thuc hien dieu tri / chi dinh dich vu;
+repeat
+  :Ghi nhan Ho so kham benh (MedicalRecord);
+repeat while (Ho so da hoan tat?) is ([Chua hoan tat]) not ([Hoan tat])
+|Le tan|
+:Tao hoa don tu Ho so kham\n(them InvoiceDetail cho tung dich vu);
+:He thong tu tinh totalAmount = Sum(lineTotal);
+|Benh nhan|
+:Thanh toan hoa don\n(tien mat / chuyen khoan);
+|Le tan|
+:Ghi nhan thanh toan\nstatus hoa don = "Da thanh toan";
+:In hoa don;
+|Benh nhan|
+:Nhan hoa don va ra ve;
+stop
+@enduml
